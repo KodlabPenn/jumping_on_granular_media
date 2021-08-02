@@ -88,7 +88,7 @@ import time
 import calc_cost_to_jump
 import robot_models
 
-def jump_once(R=0.03, kl_e=650, bl_AD=0, xdot=-1.0, AD_FLAG=False, bl_c=0.5, bl_e=5, kl_c=250, max_runtime=0.9, dt=0.000001, Rho=1000.0, Phi = 0.57, data_folder='experiment_data', kg_scale=1, bg_scale=1):
+def jump_once(R=0.03, kl_e=650, bl_AD=0, xdot=-1.0, AD_FLAG=False, bl_c=0.5, bl_e=5, kl_c=250, max_runtime=0.9, dt=0.000001, Rho=1000.0, Phi = 0.57, data_folder='experiment_data', kg_scale=1, bg_scale=1, SAVE_DATA=False, fname='test'):
     robot = robot_models.robot()
     sand = sand_goldman.sand(R=R,Phi=Phi,Rho=Rho)
     sand.m0 = robot.mf
@@ -96,9 +96,6 @@ def jump_once(R=0.03, kl_e=650, bl_AD=0, xdot=-1.0, AD_FLAG=False, bl_c=0.5, bl_
     x_0 = [0, xdot, 0, xdot]
 
     start = time.time()
-
-    if ('SAVE_DATA' not in globals()):
-        SAVE_DATA = False
 
     BODPOS = 0
     BODVEL = 1
@@ -366,5 +363,6 @@ def jump_once(R=0.03, kl_e=650, bl_AD=0, xdot=-1.0, AD_FLAG=False, bl_c=0.5, bl_
     # Uncomment these two lines if you want the simulation results to include velocity of body and toe
     simulation_results['bodvel'] = xs[:,BODVEL]
     simulation_results['toevel'] = xs[:,TOEVEL]
+    simulation_results['Fbfs'] = Fbfs
     
     return simulation_results
