@@ -88,9 +88,13 @@ import time
 import calc_cost_to_jump
 import robot_models
 
-def jump_once(R=0.03, kl_e=650, bl_AD=0, xdot=-1.0, AD_FLAG=False, bl_c=0.5, bl_e=5, kl_c=250, max_runtime=0.9, dt=0.000001, Rho=1000.0, Phi = 0.57, data_folder='experiment_data', kg_scale=1, bg_scale=1, SAVE_DATA=False, fname='test'):
+def jump_once(R=0.03, kl_e=650, bl_AD=0, xdot=-1.0, AD_FLAG=False, bl_c=0.5, bl_e=5, kl_c=250, max_runtime=0.9, dt=0.000001, Rho=1000.0, Phi = 0.57, data_folder='experiment_data', kg_scale=1, bg_scale=1, SAVE_DATA=False, fname='test', Sigma=120000, b=17.2):
     robot = robot_models.robot()
     sand = sand_goldman.sand(R=R,Phi=Phi,Rho=Rho)
+    if (Sigma != sand.Sigma):
+        sand.Sigma = Sigma
+    if (b != sand.b):
+        sand.b = b
     sand.m0 = robot.mf
 
     x_0 = [0, xdot, 0, xdot]
@@ -347,7 +351,7 @@ def jump_once(R=0.03, kl_e=650, bl_AD=0, xdot=-1.0, AD_FLAG=False, bl_c=0.5, bl_
                 json.dump(dataToSaveList,write_file)
     #print("total time")
     #print(time.time() - start)
-    apex = max(xs[:,BODPOS]+robot.leg.nomLegLen)
+    apex = max(x_flight[:,BODPOS])+robot.leg.nomLegLen
     energy_vals = calc_cost_to_jump.calc_joules(xs, ths, kls, bls)
     joules = energy_vals['joules']
     print('joules: '+str(joules))
