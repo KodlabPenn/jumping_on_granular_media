@@ -36,8 +36,7 @@ if ('R_' in fname):
     R_val_string = fname[R_ind+2:fname.find('__')].replace('_','.')
     R = float(R_val_string)
 
-execfile('simulation_parameters.py')
-framesSlice = int(0.006/dt)
+#execfile('simulation_parameters.py')
 
 print('Visualizing experiment '+fname)
 
@@ -53,6 +52,9 @@ mfs = data[:,7]    # foot masses
 kls = data[:,8]    # leg stiffnesses
 kgs = data[:,9]    # ground stiffnesses
 bls = data[:,10]   # leg damping values
+
+dt = ts[1]-ts[0]
+framesSlice = int(0.006/dt)
 
 nTimeSteps = np.size(kls)
 allTimeSteps = range(nTimeSteps)

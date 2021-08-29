@@ -309,10 +309,11 @@ def jump_once(R=0.03, kl_e=650, bl_AD=0, xdot=-1.0, AD_FLAG=False, bl_c=0.5, bl_
 
         while tsf < nTimeSteps:
             x_n = x_flight[tsf-1]
+            Fbf = kl_n*(x_n[BODPOS]-x_n[TOEPOS])+bl_n*(x_n[BODVEL]-x_n[TOEVEL])
             x_flight[tsf,BODPOS] = x_n[BODPOS] + dt*x_n[BODVEL]
             x_flight[tsf,TOEPOS] = x_n[TOEPOS] + dt*x_n[TOEVEL]
-            x_flight[tsf,BODVEL] = x_n[BODVEL] + dt*(-kl_n*(x_n[BODPOS]-x_n[TOEPOS])/mb-g)
-            x_flight[tsf,TOEVEL] = x_n[TOEVEL] + dt*((kl_n*(x_n[BODPOS]-x_n[TOEPOS])+bl_n*(x_n[BODVEL]-x_n[TOEVEL]))/robot.mf-g)
+            x_flight[tsf,BODVEL] = x_n[BODVEL] + dt*(-Fbf/mb-g)
+            x_flight[tsf,TOEVEL] = x_n[TOEVEL] + dt*(Fbf/robot.mf-g)
             
             if x_flight[tsf,TOEPOS] < 0 and x_flight[tsf,BODVEL] < 0 and x_flight[tsf,TOEVEL] < 0:
                 x_flight = x_flight[1:tsf]
@@ -325,10 +326,10 @@ def jump_once(R=0.03, kl_e=650, bl_AD=0, xdot=-1.0, AD_FLAG=False, bl_c=0.5, bl_
         bls = np.vstack((bls,bl_n*np.ones((tsf-2,1))))
         kgs = np.vstack((kgs,np.zeros((tsf-2,1))))
         bgs = np.vstack((bgs,np.zeros((tsf-2,1))))
-        times = np.zeros((len(bls),1))
+        times = [dt*t for t in range(len(bls))]
+        times = np.array(times)
+        times.shape = (len(bls),1)
 
-        for (i,t) in zip(range((ts-1),len(bls)-1),tspan[(ts-1):len(bls)-1]):
-            times[i] = tspan[i]
         for i in range(len(bls)):
             r = xs[i,0]-xs[i,2]+robot.leg.nomLegLen
             dR = xs[i,1]-xs[i,3]
